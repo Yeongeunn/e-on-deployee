@@ -1,34 +1,43 @@
+# docker-compose.yml (로컬 개발 및 테스트용)
+
 version: '3.8'
 
 services:
   backend:
+    # 이 부분이 핵심! image 대신 build를 사용합니다.
+    # './backend' 폴더의 Dockerfile을 읽어서 이미지를 직접 빌드하라는 의미입니다.
     build: ./backend
+    container_name: e-on-backend-local
+    restart: always
     ports:
       - "4000:4000"
     depends_on:
       - mysql
-    environment:
-      DB_HOST: mysql
-      DB_USER: user
-      DB_PASSWORD: pass
-      DB_NAME: app_db
+    # 로컬 테스트용 .env 파일을 사용합니다.
+    env_file:
+      - ./backend/.env
 
   frontend:
+    # 프론트엔드도 마찬가지로 직접 빌드합니다.
     build: ./frontend
+    container_name: e-on-frontend-local
+    restart: always
     ports:
-      - "3000:3000"
+      # 로컬에서는 3000번 포트를 사용해봅시다. (vite 기본 포트)
+      - "5173:80" # 브라우저 5173 -> Nginx 80
     depends_on:
       - backend
 
   mysql:
     image: mysql:8.0
+    container_name: e-on-mysql-local
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: eon_db
-      MYSQL_USER: eon
-      MYSQL_PASSWORD: eon
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
     volumes:
       - mysql_data:/var/lib/mysql
 
