@@ -6,7 +6,7 @@ pipeline {
     environment {
         // --- Credentials에서 모든 설정 정보 불러오기 ---
         // 젠킨스 Credentials에 등록한 ID를 사용한다.
-        DOCKERHUB_ID = credentials('dockerhub-id')
+        DOCKERHUB_ID = credentials('dockerhub-id-text')
         SERVER_USER  = credentials('gcp-server-user')
         SERVER_IP    = credentials('gcp-server-ip')
         VITE_API_URL = credentials('vite-api-url')
