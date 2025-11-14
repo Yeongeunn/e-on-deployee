@@ -5,10 +5,19 @@
 # ==========================================================
 # React 앱 빌드 환경
 FROM node:20-alpine AS builder
+
+#젠킨스로부터 값을 받을 변수 선언
+ARG VITE_API_BASE_URL
+
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+#빌드 시점에 사용할 .env 파일을 동적으로 생성, 젠킨스가 주입한 ARG 값을 .env파일에 쓴다.
+RUN echo "VITE_API_BASE_URL=${VITE_API_BASE_URL}" > .env
+
 # React 앱 빌드 실행 -> /app/dist 폴더에 결과물 생성
 RUN npm run build
 
