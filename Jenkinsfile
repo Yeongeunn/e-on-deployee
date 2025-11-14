@@ -12,8 +12,8 @@ pipeline {
         VITE_API_URL = credentials('vite-api-url')
 
         // --- 불러온 변수를 사용해 이미지 이름 조합하기 ---
-        BE_IMAGE_NAME = "${DOCKERHUB_ID}/e-on-backend"
-        FE_IMAGE_NAME = "${DOCKERHUB_ID}/e-on-frontend"
+        BE_IMAGE_NAME = "${DOCKERHUB_ID_TEXT}/e-on-backend"
+        FE_IMAGE_NAME = "${DOCKERHUB_ID_TEXT}/e-on-frontend"
     }
 
     stages {
@@ -68,11 +68,11 @@ pipeline {
                             
                             # 2. Docker Hub에서 최신 이미지 다운로드
                             echo ">> Pulling latest images..."
-                            docker compose pull
+                            docker-compose pull
                             
                             # 3. 새 이미지로 컨테이너 실행 (변경된 것만)
                             echo ">> Starting new containers..."
-                            docker compose up -d
+                            docker-compose up -d
                             
                             # 4. 불필요한 구버전 이미지 삭제
                             echo ">> Pruning old images..."
