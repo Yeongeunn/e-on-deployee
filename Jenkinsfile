@@ -42,16 +42,17 @@ pipeline {
 
         stage('Push Images to Docker Hub') {
             steps {
-                // 'dockerhub-credentials' ID의 자격증명을 사용해 Docker Hub에 로그인
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                // 사용자가 'dockerhub-id'로 생성한 Username/Password Credential 사용
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
                     sh "docker push ${BE_IMAGE_NAME}:latest"
                     sh "docker push ${FE_IMAGE_NAME}:latest"
+                    sh "docker logout" // post 블록 대신 여기서 정리
                 }
             }
         }
 
-        stage('Deploy to Server') {
+        stage('Deploy to Production Server') {
             steps {
                 // SSH Agent 플러그인이 제공하는 기능
                 // 'deploy-server-ssh-key' ID의 SSH 키를 사용해 배포 서버에 접속
@@ -88,9 +89,7 @@ pipeline {
     post { // 파이프라인이 끝나면 항상 실행
         always {
             echo 'Cleaning up Jenkins workspace...'
-            // 젠킨스 서버의 빌드 캐시 삭제
-            sh "docker logout"
-            sh "docker image prune -f || true"
+            // sh 명령어는 각 stage에서 처리했으므로 여기서는 작업 공간만 정리
             cleanWs()
         }
     }
