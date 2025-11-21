@@ -12,8 +12,7 @@ module.exports = (passport) => {
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID,
-        callbackURL: 'http://localhost:4000/auth/kakao/callback',
-      },
+        callbackURL: `${process.env.BACKEND_URL || 'http://localhost:4000'}/auth/kakao/callback`,      },
       async (accessToken, refreshToken, profile, done) => {
         try {
           console.log('✅ 카카오 로그인 성공. 프로필 정보 수신');
