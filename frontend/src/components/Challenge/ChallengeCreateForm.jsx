@@ -714,7 +714,7 @@ const ChallengeCreateForm = ({
                                             gap: 8,
                                         }}>
                                         <a
-                                            href={`${import.meta.env.VITE_BASE_URL.replace(
+                                            href={`${import.meta.env.VITE_API_URL.replace(
                                                 /\/api\/?$/,
                                                 ""
                                             )}${att.url}`}
