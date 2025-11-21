@@ -10,7 +10,7 @@ export default function HistoryRecommendation() {
     const navigate = useNavigate();
 
     const API =
-        (import.meta.env.VITE_API_BASE_URL || "") + "/api/ai/recommend/history";
+        (import.meta.env.VITE_API_URL || "") + "/api/ai/recommend/history";
 
     // 응답 아이템 정규화: id/title/description 통일
     const normalize = (x) => ({
