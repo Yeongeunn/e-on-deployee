@@ -19,14 +19,16 @@ export function useChallengeRecommendHistory(opts) {
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) setRuns(JSON.parse(raw));
-    } catch {}
+    } catch {// 저장 실패 무시
+      }
   }, []);
 
   // 히스토리 저장
   useEffect(() => {
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(runs.slice(0, 20))); // 최근 20개만
-    } catch {}
+    } catch {// 저장 실패 무시
+      }
   }, [runs]);
 
   async function recommend(userText, challenges) {

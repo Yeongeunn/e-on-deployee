@@ -143,7 +143,8 @@ export default function FindIdModal({ onClose }) {
             </div>
             {timerActive && <p className={timerStyles.timer}>남은 시간: {formatTime(remainingTime)}</p>}
             {codeExpired && <p className={modalStyles.errorMessage}>인증 시간이 만료되었습니다. 다시 전송해주세요.</p>}
-
+            {message && <p className={modalStyles.successMessage}>{message}</p>}
+            
             <button
               className={modalStyles.primaryButton}
               type="button"
