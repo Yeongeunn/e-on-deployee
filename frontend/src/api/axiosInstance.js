@@ -98,7 +98,7 @@ axiosInstance.interceptors.response.use(
                 original.headers = original.headers || {};
                 if (csrfToken) original.headers["X-CSRF-Token"] = csrfToken;
                 return axiosInstance.request(original); // 재시도
-            } catch (e) {
+            } catch {
                 // 재발급 실패시 아래로 떨어져서 그대로 에러 처리
             }
         }
