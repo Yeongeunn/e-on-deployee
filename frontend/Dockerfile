@@ -7,7 +7,7 @@
 FROM node:20-alpine AS builder
 
 #젠킨스로부터 값을 받을 변수 선언
-ARG VVITE_API_URL
+ARG VITE_API_URL
 
 
 WORKDIR /app
