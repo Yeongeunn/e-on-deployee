@@ -34,7 +34,7 @@ pipeline {
                 stage('Build Frontend') {
                     steps {
                         // 프론트엔드 Dockerfile로 이미지 빌드 (build-arg로 API 주소 주입)
-                        sh "docker build --build-arg VITE_API_BASE_URL=${VITE_API_URL} -t ${FE_IMAGE_NAME}:latest -f frontend/Dockerfile ./frontend"
+                        sh "docker build --build-arg VITE_API_URL=${VITE_API_URL} -t ${FE_IMAGE_NAME}:latest -f frontend/Dockerfile ./frontend"
                     }
                 }
             }
