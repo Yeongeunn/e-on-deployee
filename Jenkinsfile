@@ -67,7 +67,7 @@ pipeline {
                     verifyDeployments: true])
             }
         }
-        
+    }
 
 
     post { // 파이프라인이 끝나면 항상 실행
