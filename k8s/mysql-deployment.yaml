@@ -15,33 +15,40 @@ spec:
       - name: mysql
         image: mysql:8.0
         env:
+        # 1. 루트 비밀번호 (초기화용)
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: eon-secrets
               key: db-root-password
+
+        # 2. 데이터베이스 이름
         - name: MYSQL_DATABASE
-          value: eon_db
+          value: "eon_db"
+
+        # 3. 유저 아이디 (일반 텍스트)
         - name: MYSQL_USER
-          value: eon
+          value: "eon"
+
+        # 4. 유저 비밀번호 (시크릿에서 가져옴)
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: eon-secrets
               key: db-password
-        ports:
-        - containerPort: 3306
+        
+        # 임시 저장소 설정 (PVC 아님)
         volumeMounts:
-        - name: mysql-persistent-storage
+        - name: mysql-data
           mountPath: /var/lib/mysql
       volumes:
-      - name: mysql-persistent-storage
-        emptyDir: {} # ⚠️ 주의: 실제 운영에선 PVC를 써야 데이터가 안 날아간다. 실습용?
+      - name: mysql-data
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql # 백엔드가 이 이름으로 찾습니다 (DB_HOST=mysql)
+  name: mysql # 백엔드가 이 이름으로 접속한다.
 spec:
   ports:
   - port: 3306
