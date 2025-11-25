@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'feature/docker-cicd-setup', url: 'https://github.com/Yeongeunn/e-on-deployee.git'
+                git branch: 'feature/gke-deployment', url: 'https://github.com/Yeongeunn/e-on-deployee.git'
             }
         }
 
@@ -52,39 +52,32 @@ pipeline {
             }
         }
 
-        stage('Deploy to Production Server') {
+        stage('Deploy to GKE') {
             steps {
-                // SSH Agent 플러그인이 제공하는 기능
-                // 'deploy-server-ssh-key' ID의 SSH 키를 사용해 배포 서버에 접속
-                sshagent(credentials: ['deploy-server-ssh-key']) {
-		                // 배포 서버에서 실행할 원격 명령어
+                // 1. GCP 서비스 계정 키 파일 가져오기
+                withCredentials([file(credentialsId: 'gcp-gke-key', variable: 'GCP_KEY_FILE')]) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} '
-                            set -e
-                            echo ">> Logged in to deployment server"
-                            
-                            # 1. 배포 폴더로 이동
-                            cd /srv/e-on-deployee
-                            
-                            # 2. Docker Hub에서 최신 이미지 다운로드
-                            echo ">> Pulling latest images..."
-                            docker-compose pull
-                            
-                            # 3. 새 이미지로 컨테이너 실행 (변경된 것만)
-                            echo ">> Starting new containers..."
-                            docker-compose up -d
-                            
-                            # 4. 불필요한 구버전 이미지 삭제
-                            echo ">> Pruning old images..."
-                            docker image prune -f
-                            
-                            echo ">> Deployment complete!"
-                        '
+                        # 2. GKE 인증 처리(서비스 계정 활성화)
+                        gcloud auth activate-service-account --key-file=${GCP_KEY_FILE}
+                        
+                        # 3. 클러스터 접속 정보 가져오기 (본인 정보로 수정 필수!)
+                        # GCP 콘솔 -> GKE -> 연결 버튼 누르면 나오는 명령어 복붙
+                        gcloud container clusters get-credentials [클러스터이름] --zone [지역/asia-northeast3-a] --project [프로젝트ID]
+
+                        # 4. 쿠버네티스 배포 적용
+                        echo ">> Deploying to Kubernetes..."
+                        
+                        # k8s 폴더 안에 있는 모든 yaml 파일을 적용
+                        kubectl apply -f k8s/
+                        
+                        # 5. 강제로 재시작하여 최신 이미지 당겨오게 하기 (롤링 업데이트)
+                        kubectl rollout restart deployment/backend
+                        kubectl rollout restart deployment/frontend
                     """
                 }
             }
         }
-    }
+
 
     post { // 파이프라인이 끝나면 항상 실행
         always {
