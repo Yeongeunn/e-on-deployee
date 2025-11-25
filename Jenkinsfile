@@ -57,14 +57,28 @@ pipeline {
 
         stage('Deploy to GKE') {
             steps {
-                // 교수님 강의자료에 나온 'KubernetesEngineBuilder' 플러그인 사용
-                step([$class: 'KubernetesEngineBuilder',
-                    projectId: env.PROJECT_ID,       
-                    clusterName: env.CLUSTER_NAME,                   
-                    location: env.LOCATION,
-                    manifestPattern: 'k8s/*.yaml',          
-                    credentialsId: env.CREDENTIALS_ID,           
-                    verifyDeployments: true])
+                // 플러그인 대신 쉘 스크립트로 직접 배포
+                withCredentials([file(credentialsId: env.CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
+                    sh """
+                        # 1. GKE 인증 (서비스 계정 키 사용)
+                        gcloud auth activate-service-account --key-file=${GCP_KEY_FILE}
+                        
+                        # 2. 클러스터 연결 설정
+                        gcloud container clusters get-credentials ${env.CLUSTER_NAME} --zone ${env.LOCATION} --project ${env.PROJECT_ID}
+                        
+                        # 3. 배포 확인 (디버깅용: 파일이 진짜 있는지 확인)
+                        echo ">> Checking k8s files..."
+                        ls -la k8s/
+
+                        # 4. 쿠버네티스 배포 (여기서는 *.yaml이 잘 먹힙니다!)
+                        echo ">> Deploying to Kubernetes..."
+                        kubectl apply -f k8s/
+                        
+                        # 5. 롤링 업데이트
+                        kubectl rollout restart deployment/backend
+                        kubectl rollout restart deployment/frontend
+                    """
+                }
             }
         }
     }
