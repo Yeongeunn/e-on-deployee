@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend
 spec:
-  replicas: 2 # 파드를 2개 띄워서 부하 분산
+  replicas: 3 # 파드를 3개 띄워서 부하 분산
   selector:
     matchLabels:
       app: backend
