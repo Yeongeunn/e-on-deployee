@@ -5,11 +5,14 @@ pipeline {
 
     environment {
         // --- Credentials에서 모든 설정 정보 불러오기 ---
-        // 젠킨스 Credentials에 등록한 ID를 사용한다.
-        DOCKERHUB_ID_TEXT = credentials('dockerhub-id-text')
-        SERVER_USER  = credentials('gcp-server-user')
-        SERVER_IP    = credentials('gcp-server-ip')
-        VITE_API_URL = credentials('vite-api-url')
+		PROJECT_ID = 'education-on-474706' //본인 프로젝트 아이디
+		CLUSTER_NAME = 'eon-cluster-1' //본인 클러스터 이름
+		LOCATION = 'asia-northeast3-a'  //본인 클러스터 지역
+		CREDENTIALS_ID = 'gcp-sa-key'//젠킨스 크레덴셜로 등록할 아이디
+		    
+		//    --도커 허브 & 프론트엔드 설정--
+        DOCKERHUB_ID_TEXT = credentials('dockerhub-id-text') //도커아이디
+        VITE_API_URL = credentials('vite-api-url') //프론트엔드 API 주소
 
         // --- 불러온 변수를 사용해 이미지 이름 조합하기 ---
         BE_IMAGE_NAME = "${DOCKERHUB_ID_TEXT}/e-on-backend"
@@ -54,29 +57,17 @@ pipeline {
 
         stage('Deploy to GKE') {
             steps {
-                // 1. GCP 서비스 계정 키 파일 가져오기
-                withCredentials([file(credentialsId: 'gcp-gke-key', variable: 'GCP_KEY_FILE')]) {
-                    sh """
-                        # 2. GKE 인증 처리(서비스 계정 활성화)
-                        gcloud auth activate-service-account --key-file=${GCP_KEY_FILE}
-                        
-                        # 3. 클러스터 접속 정보 가져오기 (본인 정보로 수정 필수!)
-                        # GCP 콘솔 -> GKE -> 연결 버튼 누르면 나오는 명령어 복붙
-                        gcloud container clusters get-credentials [클러스터이름] --zone [지역/asia-northeast3-a] --project [프로젝트ID]
-
-                        # 4. 쿠버네티스 배포 적용
-                        echo ">> Deploying to Kubernetes..."
-                        
-                        # k8s 폴더 안에 있는 모든 yaml 파일을 적용
-                        kubectl apply -f k8s/
-                        
-                        # 5. 강제로 재시작하여 최신 이미지 당겨오게 하기 (롤링 업데이트)
-                        kubectl rollout restart deployment/backend
-                        kubectl rollout restart deployment/frontend
-                    """
-                }
+                // 교수님 강의자료에 나온 'KubernetesEngineBuilder' 플러그인 사용
+                step([$class: 'KubernetesEngineBuilder',
+                    projectId: env.PROJECT_ID,       
+                    clusterName: env.CLUSTER_NAME,                   
+                    location: env.LOCATION,
+                    manifestPattern: 'k8s/*.yaml',          
+                    credentialsId: env.CREDENTIALS_ID,           
+                    verifyDeployments: true])
             }
         }
+        
 
 
     post { // 파이프라인이 끝나면 항상 실행
