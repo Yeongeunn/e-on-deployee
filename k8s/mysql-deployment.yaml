@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: eon-secrets
+              key: db-root-password
+        - name: MYSQL_DATABASE
+          value: eon_db
+        - name: MYSQL_USER
+          value: eon
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: eon-secrets
+              key: db-password
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        emptyDir: {} # ⚠️ 주의: 실제 운영에선 PVC를 써야 데이터가 안 날아간다. 실습용?
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql # 백엔드가 이 이름으로 찾습니다 (DB_HOST=mysql)
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql

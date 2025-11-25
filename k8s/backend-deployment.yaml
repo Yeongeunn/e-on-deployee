@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2 # 파드를 2개 띄워서 부하 분산
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: nye0817/e-on-backend:latest # 본인 이미지로 변경
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4000
+        env:
+        - name: DB_HOST
+          value: "mysql" # Service 이름과 일치해야 함
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USER
+          value: "eon"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: eon-secrets
+              key: db-password
+        # 필요한 다른 환경변수들도 여기에 추가 (API 키 등)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  type: ClusterIP # 외부 노출 X, 프론트엔드만 접근
+  selector:
+    app: backend
+  ports:
+    - port: 4000
+      targetPort: 4000
