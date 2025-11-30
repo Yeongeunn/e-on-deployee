@@ -34,7 +34,9 @@ pipeline {
         stage('Build Backend Image') {
             steps {
                 script {
-                    BACK_DOCKER = docker.build("${BACK_IMAGE}:${BACK_TAG}", ".")
+                    dir('backend') {
+                        BACK_DOCKER = docker.build("${BACK_IMAGE}:${BACK_TAG}", ".")
+                    }
                 }
             }
         }
