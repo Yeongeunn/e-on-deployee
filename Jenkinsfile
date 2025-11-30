@@ -19,27 +19,23 @@ pipeline {
         FE_IMAGE_NAME = "${DOCKERHUB_ID_TEXT}/e-on-frontend"
     }
 
-    stages {
+stages {
         stage('Checkout') {
             steps {
-                git branch: 'feature/gke-deployment', url: 'https://github.com/Yeongeunn/e-on-deployee.git'
+                checkout scm
             }
         }
-
-				stage('Build Images') {
-            parallel { // 백엔드와 프론트엔드 빌드를 동시에 진행
-                stage('Build Backend') {
-                    steps {
-                        // 백엔드 Dockerfile로 이미지 빌드
-                        sh "docker build -t ${BE_IMAGE_NAME}:latest -f backend/Dockerfile ./backend"
-                    }
-                }
-                stage('Build Frontend') {
-                    steps {
-                        // 프론트엔드 Dockerfile로 이미지 빌드 (build-arg로 API 주소 주입)
-                        sh "docker build --build-arg VITE_API_URL=${VITE_API_URL} -t ${FE_IMAGE_NAME}:latest -f frontend/Dockerfile ./frontend"
-                    }
-                }
+        //병렬 제거하고 순차적으로 실행
+        stage('Build Backend') {
+            steps {
+                // 백엔드 Dockerfile로 이미지 빌드
+                sh "docker build -t ${BE_IMAGE_NAME}:latest -f backend/Dockerfile ./backend"
+            }
+        }
+        stage('Build Frontend') {
+            steps {
+                // 프론트엔드 Dockerfile로 이미지 빌드 (build-arg로 API 주소 주입)
+                sh "docker build --build-arg VITE_API_URL=${VITE_API_URL} -t ${FE_IMAGE_NAME}:latest -f frontend/Dockerfile ./frontend"
             }
         }
 
