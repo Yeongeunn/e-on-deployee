@@ -51,18 +51,6 @@ stages {
             }
         }
 
-        stage('Push Images to Docker Hub') {
-            steps {
-                // 사용자가 'dockerhub-id'로 생성한 Username/Password Credential 사용
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                    sh "docker push ${BE_IMAGE_NAME}:latest"
-                    sh "docker push ${FE_IMAGE_NAME}:latest"
-                    sh "docker logout" // post 블록 대신 여기서 정리
-                }
-            }
-        }
-
         stage('Deploy to GKE') {
             when{
                 branch 'main' // main 브랜치일 때만 배포한다.
