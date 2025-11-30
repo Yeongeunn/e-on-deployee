@@ -22,7 +22,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'feature/gke-deployment', url: 'https://github.com/Yeongeunn/e-on-deployee.git'
+                checkout scm //젠킨스가 현재 감지한 브랜치를 알아서 가져온다.
             }
         }
 
@@ -56,6 +56,9 @@ pipeline {
         }
 
         stage('Deploy to GKE') {
+            when{
+                branch 'main' // main 브랜치일 때만 배포한다.
+            }
             steps {
                 // 플러그인 대신 쉘 스크립트로 직접 배포
                 withCredentials([file(credentialsId: env.CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
