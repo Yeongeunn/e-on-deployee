@@ -5,8 +5,9 @@ pipeline {
         FRONT_IMAGE = "hyomee2/eon-frontend"
         BACK_IMAGE  = "hyomee2/eon-backend"
 
-        FRONT_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-        BACK_TAG  = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        SAFE_BRANCH = "${env.BRANCH_NAME.replaceAll('[^A-Za-z0-9.-]', '-').replaceAll('-+', '-')}"
+        FRONT_TAG   = "${SAFE_BRANCH}-${env.BUILD_NUMBER}"
+        BACK_TAG    = "${SAFE_BRANCH}-${env.BUILD_NUMBER}"
     }
 
     stages {
