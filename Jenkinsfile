@@ -57,6 +57,9 @@ pipeline {
 
         stage('Deploy to GKE') {
             steps {
+                when{
+                    branch 'main' //브랜치가 'main'일 때만 배포한다.
+                }
                 // 플러그인 대신 쉘 스크립트로 직접 배포
                 withCredentials([file(credentialsId: env.CREDENTIALS_ID, variable: 'GCP_KEY_FILE')]) {
                     sh """
