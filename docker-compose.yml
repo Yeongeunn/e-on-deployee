@@ -33,7 +33,7 @@ services:
     container_name: e-on-mysql-local
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password #본인 데베 root 계정 비밀번호
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: eon_db
       MYSQL_USER: eon;
       MYSQL_PASSWORD: password
