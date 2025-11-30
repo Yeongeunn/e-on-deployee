@@ -22,7 +22,21 @@ pipeline {
 stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // 1. checkout scm 대신 가벼운 checkout 사용
+                checkout([
+                    $class: 'GitSCM',
+                    branches: scm.branches,
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[
+                        $class: 'CloneOption',
+                        depth: 1,  // ⭐️ 핵심: 최신 커밋 1개만 가져옴 (메모리 절약)
+                        noTags: true,
+                        reference: '',
+                        shallow: true
+                    ]],
+                    submoduleCfg: [],
+                    userRemoteConfigs: scm.userRemoteConfigs
+                ])
             }
         }
         //병렬 제거하고 순차적으로 실행
