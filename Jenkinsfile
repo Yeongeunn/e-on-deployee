@@ -73,6 +73,8 @@ pipeline {
             }
         }
 
+        echo "BRANCH_NAME = ${env.BRANCH_NAME}"
+
         /* 5. k8s 배포(Blue-Green) (main 브랜치에서만)*/
         stage('Deploy to K8S (Blue-Green)') {
             when { branch 'main' }
