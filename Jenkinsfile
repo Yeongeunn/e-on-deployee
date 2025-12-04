@@ -110,8 +110,27 @@ stages {
     post { // 파이프라인이 끝나면 항상 실행
         always {
             echo 'Cleaning up Jenkins workspace...'
-            // sh 명령어는 각 stage에서 처리했으므로 여기서는 작업 공간만 정리
             cleanWs()
+        }
+        success {
+            withCredentials([string(credentialsId: 'discord-webhook-url', variable: 'DISCORD_WEBHOOK')]) {
+                discordSend description: "Jenkins Pipeline Build Success!",
+                            footer: "Built by Jenkins",
+                            link: env.BUILD_URL,
+                            result: 'SUCCESS',
+                            title: "${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            webhookURL: DISCORD_WEBHOOK
+            }
+        }
+        failure {
+            withCredentials([string(credentialsId: 'discord-webhook-url', variable: 'DISCORD_WEBHOOK')]) {
+                discordSend description: "Jenkins Pipeline Build Failed! Please check the logs.",
+                            footer: "Built by Jenkins",
+                            link: env.BUILD_URL,
+                            result: 'FAILURE',
+                            title: "${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            webhookURL: DISCORD_WEBHOOK
+            }
         }
     }
 }
