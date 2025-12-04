@@ -97,7 +97,7 @@ const AcademicEventsList = () => {
     return (
         <div className={styles.academicEventsList}>
             <div className={styles.title}>
-                {currentDate.year()}년 {currentDate.month() + 1}월 주요 학사일정입니다.
+                {currentDate.year()}년 {currentDate.month() + 1}월 주요 학사일정
             </div>
             <div className={styles.eventRows}>
                 {groupedEvents.length === 0 ? (
