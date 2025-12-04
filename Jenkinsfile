@@ -5,10 +5,10 @@ pipeline {
 
     environment {
         // --- Credentials에서 모든 설정 정보 불러오기 ---
-		PROJECT_ID = 'education-on-474706' //본인 프로젝트 아이디
-		CLUSTER_NAME = 'eon-cluster-1' //본인 클러스터 이름
-		LOCATION = 'asia-northeast3-a'  //본인 클러스터 지역
-		CREDENTIALS_ID = 'gcp-sa-key'//젠킨스 크레덴셜로 등록할 아이디
+		PROJECT_ID = 'education-on-474706' 
+		CLUSTER_NAME = 'eon-cluster-1'
+		LOCATION = 'asia-northeast3-a'
+		CREDENTIALS_ID = 'gcp-sa-key'
 		    
 		//    --도커 허브 & 프론트엔드 설정--
         DOCKERHUB_ID_TEXT = credentials('dockerhub-id-text') //도커아이디
@@ -22,7 +22,21 @@ pipeline {
 stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // 1. checkout scm 대신 가벼운 checkout 사용
+                checkout([
+                    $class: 'GitSCM',
+                    branches: scm.branches,
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[
+                        $class: 'CloneOption',
+                        depth: 1,  // 최신 커밋 1개만 가져옴 (메모리 절약)
+                        noTags: true,
+                        reference: '',
+                        shallow: true
+                    ]],
+                    submoduleCfg: [],
+                    userRemoteConfigs: scm.userRemoteConfigs
+                ])
             }
         }
         //병렬 제거하고 순차적으로 실행
@@ -53,7 +67,7 @@ stages {
 
         stage('Deploy to GKE') {
             when{
-                branch 'main' // main 브랜치일 때만 배포한다.
+                branch 'main' //브랜치가 'main'일 때만 배포한다.
             }
             steps {
                 // 플러그인 대신 쉘 스크립트로 직접 배포
