@@ -227,7 +227,7 @@ const SchoolSearchBar = () => {
                     type="button"
                     className={styles.button}
                     onClick={handleSearch}>
-                    검색하기
+                    검색할래요
                 </button>
             </div>
         </div>
