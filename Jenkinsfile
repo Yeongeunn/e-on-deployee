@@ -49,7 +49,7 @@ stages {
         stage('Build Frontend') {
             steps {
                 // 프론트엔드 Dockerfile로 이미지 빌드 (build-arg로 API 주소 주입)
-                sh "docker build --no-cache --build-arg VITE_API_URL=${VITE_API_URL} -t ${DOCKERHUB_ID_TEXT}/e-on-frontend:v6 -f frontend/Dockerfile ./frontend"            }
+                sh "docker build --no-cache --build-arg VITE_API_URL=${VITE_API_URL} -t ${DOCKERHUB_ID_TEXT}/e-on-frontend:v7 -f frontend/Dockerfile ./frontend"            }
         }
 
         stage('Push Images to Docker Hub') {
@@ -58,7 +58,7 @@ stages {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
                     sh "docker push ${BE_IMAGE_NAME}:latest"
-                    sh "docker push ${FE_IMAGE_NAME}:v6"
+                    sh "docker push ${FE_IMAGE_NAME}:v7"
                     sh "docker logout" // post 블록 대신 여기서 정리
                 }
             }
