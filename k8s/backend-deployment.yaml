@@ -118,7 +118,7 @@ kind: Service
 metadata:
   name: backend
 spec:
-  type: LoadBalancer 
+  type: LoadBalancer
   selector:
     app: backend
   ports:
