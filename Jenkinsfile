@@ -17,6 +17,8 @@ pipeline {
         // --- 불러온 변수를 사용해 이미지 이름 조합하기 ---
         BE_IMAGE_NAME = "${DOCKERHUB_ID_TEXT}/e-on-backend"
         FE_IMAGE_NAME = "${DOCKERHUB_ID_TEXT}/e-on-frontend"
+
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
 stages {
@@ -49,7 +51,7 @@ stages {
         stage('Build Frontend') {
             steps {
                 // 프론트엔드 Dockerfile로 이미지 빌드 (build-arg로 API 주소 주입)
-                sh "docker build --no-cache --build-arg VITE_API_URL=${VITE_API_URL} -t ${DOCKERHUB_ID_TEXT}/e-on-frontend:v7 -f frontend/Dockerfile ./frontend"            }
+                sh "docker build --no-cache --build-arg VITE_API_URL=${VITE_API_URL} -t ${DOCKERHUB_ID_TEXT}/e-on-frontend:${IMAGE_TAG} -f frontend/Dockerfile ./frontend"            }
         }
 
         stage('Push Images to Docker Hub') {
@@ -58,7 +60,7 @@ stages {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
                     sh "docker push ${BE_IMAGE_NAME}:latest"
-                    sh "docker push ${FE_IMAGE_NAME}:v7"
+                    sh "docker push ${FE_IMAGE_NAME}:${IMAGE_TAG}"
                     sh "docker logout" // post 블록 대신 여기서 정리
                 }
             }
@@ -78,11 +80,20 @@ stages {
                         # 2. 클러스터 연결 설정
                         gcloud container clusters get-credentials ${env.CLUSTER_NAME} --zone ${env.LOCATION} --project ${env.PROJECT_ID}
                         
-                        # 3. 배포 확인 (디버깅용: 파일이 진짜 있는지 확인)
+                        # 3. 파일 확인
                         echo ">> Checking k8s files..."
                         ls -la k8s/
 
-                        # 4. 쿠버네티스 배포 (여기서는 *.yaml이 잘 먹힙니다!)
+                        echo ">> Changing image tag to ${IMAGE_TAG} in deployment.yaml..."
+                
+                        # 'frontend:빌드번호'로 변경
+                        sed -i 's|nye0817/e-on-frontend:.*|nye0817/e-on-frontend:${IMAGE_TAG}|' k8s/frontend-deployment.yaml
+                        
+                        # 확인 로그 출력
+                        echo ">> Verifying updated image tag:"
+                        grep "image:" k8s/frontend-deployment.yaml
+
+                        # 4. 쿠버네티스 배포
                         echo ">> Deploying to Kubernetes..."
                         kubectl apply -f k8s/
                         
