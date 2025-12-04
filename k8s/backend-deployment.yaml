@@ -14,16 +14,21 @@ spec:
     spec:
       containers:
       - name: backend
-        image: nye0817/e-on-backend:latest # 본인 이미지로 변경
+        image: nye0817/e-on-backend:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 4000
+        readinessProbe:
+          tcpSocket:
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 5
         env:
         # ==========================================
         # 1. 데이터베이스 연결 정보
         # ==========================================
         - name: DB_HOST
-          value: "mysql" # Service 이름과 동일해야 함
+          value: "mysql" 
         - name: DB_PORT
           value: "3306"
         - name: DB_USER
@@ -34,7 +39,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: eon-secrets
-              key: db-password # MySQL 설정과 같은 키 사용
+              key: db-password
 
         # ==========================================
         # 2. 서버 기본 설정
