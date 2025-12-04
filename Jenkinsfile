@@ -49,7 +49,7 @@ stages {
         stage('Build Frontend') {
             steps {
                 // 프론트엔드 Dockerfile로 이미지 빌드 (build-arg로 API 주소 주입)
-                sh "docker build --no-cache --build-arg VITE_API_URL=${VITE_API_URL} -t ${DOCKERHUB_ID_TEXT}/e-on-frontend:latest -f frontend/Dockerfile ./frontend"            }
+                sh "docker build --no-cache --build-arg VITE_API_URL=${VITE_API_URL} -t ${DOCKERHUB_ID_TEXT}/e-on-frontend:v2 -f frontend/Dockerfile ./frontend"            }
         }
 
         stage('Push Images to Docker Hub') {
