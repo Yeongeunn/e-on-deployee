@@ -42,7 +42,7 @@ spec:
         - name: PORT
           value: "4000"
         - name: FRONTEND_URL
-          value: "http://localhost" # 본인 외부 IP로 변경
+          value: "http://34.64.221.184" 
 
         # ==========================================
         # 3. 공공 데이터 API 키 (NEIS, 국토부)
