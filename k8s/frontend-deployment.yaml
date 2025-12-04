@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: nye0817/e-on-frontend:v3 # 본인 이미지로 변경
+        image: nye0817/e-on-frontend:v4 # 본인 이미지로 변경
         imagePullPolicy: Always
         ports:
         - containerPort: 80
