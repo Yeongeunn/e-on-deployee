@@ -58,7 +58,7 @@ stages {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
                     sh "docker push ${BE_IMAGE_NAME}:latest"
-                    sh "docker push ${FE_IMAGE_NAME}:latest"
+                    sh "docker push ${FE_IMAGE_NAME}:v2"
                     sh "docker logout" // post 블록 대신 여기서 정리
                 }
             }
