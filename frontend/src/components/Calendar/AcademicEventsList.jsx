@@ -102,7 +102,7 @@ const AcademicEventsList = () => {
             <div className={styles.eventRows}>
                 {groupedEvents.length === 0 ? (
                     <div className={styles.eventRow}>
-                        이 달의 일정이 없습니다.
+                        이 달의 일정이 없습니다. ㅠㅠ!!
                     </div>
                 ) : (
                     groupedEvents.map(({ day, events }, idx) => (
