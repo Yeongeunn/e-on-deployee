@@ -1,18 +1,26 @@
 def notifyDiscord(String title, String color, String description) {
-    withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_WEBHOOK')]) {
-        sh """
-        curl -H "Content-Type: application/json" -X POST \
-        -d '{
-            "embeds": [{
-                "title": "${title}",
-                "description": "${description}",
-                "color": ${color}
-            }]
-        }' \
-        $DISCORD_WEBHOOK
-        """
+    withCredentials([string(credentialsId: 'discord-webhook', variable: 'HOOK')]) {
+
+        def payload = groovy.json.JsonOutput.toJson([
+            embeds: [[
+                title: title,
+                description: description,
+                color: color.toInteger()
+            ]]
+        ])
+
+        sh(
+            script: """#!/bin/bash
+                curl -H "Content-Type: application/json" \
+                -X POST \
+                -d '${payload}' \
+                "\$HOOK"
+            """,
+            label: "Send Discord Notification"
+        )
     }
 }
+
 
 pipeline {
     agent any
