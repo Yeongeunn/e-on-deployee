@@ -25,7 +25,7 @@ const ViewProvider = ({ children }) => {
     // 선택된 값을 type 별로 분리
     const [selectedSchoolName, setSelectedSchoolName] = useState("");
     const [selectedRegionName, setSelectedRegionName] = useState("");
-    const [schedules, setSchedules] = useState(null);
+    const [schedules, setSchedules] = useState([]);
     const [currentSchoolCode, setCurrentSchoolCode] = useState({
         code: null,
         type: searchType.type,
