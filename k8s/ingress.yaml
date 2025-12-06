@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eon-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+spec:
+  defaultBackend:
+    service:
+      name: frontend
+      port:
+        number: 80
+  rules:
+  - http:
+      paths:
+      # 1. 백엔드 API (/api로 시작하는 것들)
+      - path: /api/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend # deployment.yaml의 서비스 이름과 같아야 함
+            port:
+              number: 4000
+      
+      # 2. 소켓 
+      - path: /socket.io/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend
+            port:
+              number: 4000
+
+      # 3. 프론트엔드 (나머지 전부)
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80

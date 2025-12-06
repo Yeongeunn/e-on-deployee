@@ -41,3 +41,14 @@ server.listen(PORT, () => {
 // Cron Job 
 const { startAverageScheduleJob } = require("./scripts/averageScheduleCron");
 startAverageScheduleJob();
+
+
+process.on('SIGTERM', () => {
+  console.info('SIGTERM signal received: closing HTTP server');
+  
+  // HTTP 서버 닫기
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+});
