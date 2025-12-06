@@ -18,17 +18,11 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 4000
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 4000
-          initialDelaySeconds: 30  # 서버 켜질 때까지 30초 기다려줌
-          periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 4000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           periodSeconds: 5
         env:
         # ==========================================

@@ -62,7 +62,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //GKE Ingress 헬스체크용 코드
-app.get('/', (req, res) => {
+app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
