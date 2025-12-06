@@ -123,7 +123,7 @@ kind: Service
 metadata:
   name: backend
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: backend
   ports:
