@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
-    baseURL: "/api",
+    baseURL: "/",
     withCredentials: true,
     timeout: 5000,
     headers: { "Content-Type": "application/json" },
