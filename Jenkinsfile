@@ -45,7 +45,7 @@ stages {
         stage('Build Backend') {
             steps {
                 // 백엔드 Dockerfile로 이미지 빌드
-                sh "docker build -t ${BE_IMAGE_NAME}:latest -f backend/Dockerfile ./backend"
+                sh "docker build --no-cache -t ${BE_IMAGE_NAME}:${IMAGE_TAG} -f backend/Dockerfile ./backend"
             }
         }
         stage('Build Frontend') {
@@ -59,7 +59,7 @@ stages {
                 // 사용자가 'dockerhub-id'로 생성한 Username/Password Credential 사용
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                    sh "docker push ${BE_IMAGE_NAME}:latest"
+                    sh "docker push ${BE_IMAGE_NAME}:${IMAGE_TAG}"
                     sh "docker push ${FE_IMAGE_NAME}:${IMAGE_TAG}"
                     sh "docker logout" // post 블록 대신 여기서 정리
                 }
@@ -88,6 +88,8 @@ stages {
                 
                         # 'frontend:빌드번호'로 변경
                         sed -i 's|nye0817/e-on-frontend:.*|nye0817/e-on-frontend:${IMAGE_TAG}|' k8s/frontend-deployment.yaml
+                        sed -i 's|nye0817/e-on-backend:.*|nye0817/e-on-backend:${IMAGE_TAG}|' k8s/backend-deployment.yaml
+
 
                         # 4. 쿠버네티스 배포
                         echo ">> Deploying to Kubernetes..."
