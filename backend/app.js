@@ -35,6 +35,11 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
+//GKE Ingress 헬스체크용 코드
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
+
 // app.js
 const sessionStore = new SequelizeStore({
     db: sequelize,
@@ -60,11 +65,6 @@ app.use(sessionMiddleware);
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-//GKE Ingress 헬스체크용 코드
-app.get('/health', (req, res) => {
-    res.status(200).send('OK');
-});
 
 // 보안 - 4) CSRF: 쿠키 대신 세션 사용
 const csrfProtection = csrf();
