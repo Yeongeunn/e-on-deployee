@@ -88,10 +88,6 @@ stages {
                 
                         # 'frontend:빌드번호'로 변경
                         sed -i 's|nye0817/e-on-frontend:.*|nye0817/e-on-frontend:${IMAGE_TAG}|' k8s/frontend-deployment.yaml
-                        
-                        # 확인 로그 출력
-                        echo ">> Verifying updated image tag:"
-                        grep "image:" k8s/frontend-deployment.yaml
 
                         # 4. 쿠버네티스 배포
                         echo ">> Deploying to Kubernetes..."
