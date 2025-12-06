@@ -87,11 +87,11 @@ app.use("/api/activity", require("./routes/activity"));
 app.use("/api/notification", require("./routes/notificationRouter"));
 app.use("/api/notifications", require("./routes/notificationRouter"));
 
-app.use("/schoolSchedule", require("./routes/schoolScheduleRouter"));
-app.use("/averageSchedule", require("./routes/averageScheduleRouter"));
-app.use("/regions", require("./routes/regionRouter"));
-app.use("/mySchool", require("./routes/mySchoolRouter"));
-app.use("/boards", require("./routes/boardRoute"));
+app.use("/api/schoolSchedule", require("./routes/schoolScheduleRouter"));
+app.use("/api/averageSchedule", require("./routes/averageScheduleRouter"));
+app.use("/api/regions", require("./routes/regionRouter"));
+app.use("/api/mySchool", require("./routes/mySchoolRouter"));
+app.use("/api/boards", require("./routes/boardRoute"));
 
 app.use("/api/ai", aiRecommendRoutes);
 app.use("/api/recommendations", require("./routes/recommendations"));
