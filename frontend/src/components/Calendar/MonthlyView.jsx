@@ -60,7 +60,7 @@ const MonthlyView = () => {
                             ? date.format("YYYY-MM-DD") // 예: 2025-06-13
                             : date.format("YYYYMMDD"); // 예: 20250613
 
-                    const filteredEvents = schedules.filter((schedule) => {
+                    const filteredEvents = schedules?.filter((schedule) => {
                         if (searchType.type === "region") {
                             return (
                                 schedule.average_date === targetDate &&

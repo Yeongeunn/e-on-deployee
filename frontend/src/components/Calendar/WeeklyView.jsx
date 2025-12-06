@@ -36,7 +36,7 @@ const WeeklyView = () => {
                         : date.format("YYYYMMDD");
 
                 const event =
-                    schedules.filter((schedule) => {
+                    schedules?.filter((schedule) => {
                         if (searchType.type === "region") {
                             return (
                                 schedule.average_date === targetDate &&
