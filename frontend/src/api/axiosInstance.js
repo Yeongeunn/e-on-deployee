@@ -19,7 +19,7 @@ let csrfFetching = null; // 동시 요청 방지
 async function fetchCsrfToken() {
     if (csrfFetching) return csrfFetching; // 이미 진행 중이면 그 Promise 재사용
     csrfFetching = axiosInstance
-        .get("/csrf-token", {
+        .get("/api/csrf-token", {
             // 토큰 요청에는 굳이 CSRF 헤더가 필요 없음
             headers: { "X-CSRF-Token": "" },
         })
